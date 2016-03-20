@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_marginTop="50dp"
+    android:background="@drawable/background" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/logo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:padding="10dp" >
+
+            <ImageView
+                android:layout_width="250dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
+                android:background="@drawable/safezone" />
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set route for children"
+            android:textSize="20dp"
+            android:layout_below="@+id/logo"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="30dp"
+            android:textColor="#000000"
+            android:id="@+id/takeme"
+            />
+        <LinearLayout
+            android:id="@+id/layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/logo"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"
+            android:orientation="vertical" >
+            <Button
+                android:id="@+id/btnLotrinh"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="45dp"
+                android:background="@drawable/background_select"
+                android:text="Set Route"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:id="@+id/asd"
+                android:layout_marginTop="20dp"
+                android:background="#000" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Show children 's location"
+                android:textSize="20dp"
+                android:layout_below="@+id/asd"
+                android:textColor="#000000"
+                android:id="@+id/abs"
+                />
+            <Button
+                android:id="@+id/btnBando"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/background_select"
+                android:text="Show on map"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</ScrollView>
