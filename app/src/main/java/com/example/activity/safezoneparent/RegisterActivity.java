@@ -8,9 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.parse.ParseObject;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -18,13 +20,18 @@ import java.util.List;
  */
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
     Button btnRegister;
-    EditText edtName, edtUsername, edtPassword, edtPhone, edtEmail;
-    String nameParent, usernameParentRegister,passwordParentRegister, phoneParent, emailParent;
-    public static final String NAME = "name";
-    public static final String USERNAME = "username";
-    public static final String PASS = "pass";
+    EditText edtName, edtUsername, edtPassword, edtPhone, edtEmail, edtPassConfirm;
+    String fullname_parent, usernameParentRegister,
+            passwordParentRegister, passConfirm, phoneParent, emailParent;
+    public static final String FULL_NAME = "full_name";
+    public static final String USERNAME = "user_name";
+    public static final String PASS = "password";
     public static final String PHONE = "phone";
     public static final String EMAIL = "email";
+
+    private final String urlInsert = "http://192.168.238.1:80/demo/insert.php";
+
+    RequestQueue requestQueue;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,60 +41,60 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         btnRegister = (Button) findViewById(R.id.btnRegister);
         edtName = (EditText) findViewById(R.id.edtName);
-        edtUsername = (EditText) findViewById(R.id.edtUsername);
+        edtUsername = (EditText) findViewById(R.id.edtUserParent);
         edtPassword = (EditText) findViewById(R.id.edtPassword);
+        edtPassConfirm = (EditText) findViewById(R.id.edtPasswordConfirm);
         edtPhone = (EditText) findViewById(R.id.edtPhone);
         edtEmail = (EditText) findViewById(R.id.edtEmail);
 
+        requestQueue = Volley.newRequestQueue(getApplicationContext());
 
         btnRegister.setOnClickListener(this);
     }
 
+
+    HashMap<String, String> hashMap;
     List<ParentAccount> parentAccountList = new ArrayList<>();
     boolean isUserExist = false;
     @Override
     public void onClick(View view) {
-        nameParent = edtName.getText().toString();
+        fullname_parent = edtName.getText().toString();
         usernameParentRegister = edtUsername.getText().toString();
         passwordParentRegister = edtPassword.getText().toString();
+        passConfirm = edtPassConfirm.getText().toString();
         phoneParent = edtPhone.getText().toString();
         emailParent = edtEmail.getText().toString();
-        if (nameParent.equals("") || usernameParentRegister.equals("") || passwordParentRegister.equals("")
+        if (fullname_parent.equals("") || usernameParentRegister.equals("") || passwordParentRegister.equals("")
                 || phoneParent.equals("") || emailParent.equals("")) {
             Toast.makeText(getBaseContext(), "Enter all data, please!", Toast.LENGTH_LONG).show();
         } else {
-            // kiem tra username co trung k?
-            QueryAccount queryAccount = new QueryAccount();
-            queryAccount.queryAccount("ParentAccount", new QueryAccount.QueryRouteCallBack() {
-                @Override
-                public void queryRouteSuccess(List<ParseObject> parseObjects) {
-                    for (int i = 0; i < parseObjects.size(); i++) {
-                        ParentAccount parentAccount = new ParentAccount(parseObjects.get(i).getString(NAME), parseObjects.get(i).getString(USERNAME),
-                                parseObjects.get(i).getString(PASS), parseObjects.get(i).getString(PHONE), parseObjects.get(i).getString(EMAIL));
-                        if (parseObjects.get(i).getString(USERNAME).equals(usernameParentRegister)) {
-                            isUserExist = true;
-                            Log.d("", "Exist");
-                            return;
-                        }
-//                    parentAccountList.add(parentAccount);
-                    }
-                    if (isUserExist == false) {
-                        ParseObject parent = new ParseObject("ParentAccount");
-                        parent.put(NAME, nameParent);
-                        parent.put(USERNAME, usernameParentRegister);
-                        parent.put(PASS, passwordParentRegister);
-                        parent.put(PHONE, phoneParent);
-                        parent.put(EMAIL, emailParent);
-                        parent.saveInBackground();
-                        Toast.makeText(getBaseContext(), "Register successful!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getBaseContext(), "Username is exist!", Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-            // neu chua ton tai -> dua thong tin len Parse
-            Log.d("","Put Parse");
+            // test if pass and pass confirm is not same
+            if (!passwordParentRegister.equals(passConfirm)) {
+                Toast.makeText(getBaseContext(), "the passwords are different!", Toast.LENGTH_SHORT).show();
+            } else {
+                //
+                // insert
+                hashMap = new HashMap<>();
+                hashMap.put("GET", "2");
+                hashMap.put("INSERT", "1");
+                hashMap.put(FULL_NAME, fullname_parent);
+                hashMap.put(USERNAME, usernameParentRegister);
+                hashMap.put(PASS, passwordParentRegister);
+                hashMap.put(PHONE, phoneParent);
+                hashMap.put(EMAIL, emailParent);
 
+                SocketAsynctask socketAsynctask = new SocketAsynctask(this);
+                socketAsynctask.execute(hashMap);
+                socketAsynctask.socketResponse = new SocketAsynctask.SocketResponse() {
+                    @Override
+                    public void response(String result) {
+                        Log.d("R", ""+result);
+                        Toast.makeText(getBaseContext(), ""+result, Toast.LENGTH_SHORT).show();
+                    }
+                };
+
+                Log.d("", "execute");
+            }
         }
     }
 }

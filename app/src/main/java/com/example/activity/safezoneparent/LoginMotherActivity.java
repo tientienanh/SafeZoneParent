@@ -12,15 +12,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.parse.ParseObject;
-
-import java.util.List;
+import java.util.HashMap;
 
 public class LoginMotherActivity extends AppCompatActivity implements View.OnClickListener{
 
     EditText edtUserNameParent, edtPassParent;
     Button btnLoginParent, btnRegisterParent, btnLostPassParent;
     public static String parentUserNameLogin;
+    public static final String MODE_LOGIN = "login";
+    public static final String USER_PARENT = "user_parent";
+    public static final String PASS_PARENT = "pass_parent";
+    public static final String KEY_LOGIN = "login";
+
+    public static String parent_user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,48 +92,48 @@ public class LoginMotherActivity extends AppCompatActivity implements View.OnCli
     }
 
     boolean isAccountTrue = false;
-
+    SocketAsynctask socketAsynctask;
+    HashMap<String, String> hashMapLogin = new HashMap<>();
     public void loginParent() {
         userNameParent = edtUserNameParent.getText().toString();
         passParent = edtPassParent.getText().toString();
-        QueryAccount queryAccount = new QueryAccount();
         if (userNameParent.equals("") || passParent.equals("")) {
             Toast.makeText(getBaseContext(), "Enter all data, please!", Toast.LENGTH_SHORT).show();
         } else {
-            queryAccount.queryAccount("ParentAccount", new QueryAccount.QueryRouteCallBack() {
-
+            // send mode login
+            hashMapLogin.put(KEY_LOGIN, MODE_LOGIN);
+            hashMapLogin.put(USER_PARENT, userNameParent);
+            hashMapLogin.put(PASS_PARENT, passParent);
+            socketAsynctask = new SocketAsynctask(this);
+            socketAsynctask.execute(hashMapLogin);
+            socketAsynctask.socketResponse = new SocketAsynctask.SocketResponse() {
                 @Override
-                public void queryRouteSuccess(List<ParseObject> parseObjects) {
-                    for (int i =0;i < parseObjects.size();i++) {
-                        String usernameParse = parseObjects.get(i).getString(RegisterActivity.USERNAME);
-                        String passParse = parseObjects.get(i).getString(RegisterActivity.PASS);
-                        if (usernameParse.equals(userNameParent) && passParse.equals(passParent)) {
-                            isAccountTrue = true;
-                            break;
-                        }
-                    }
-
-                    if (isAccountTrue == false) {
-                        Toast.makeText(getBaseContext(), "Username or passwword is not correct!", Toast.LENGTH_SHORT).show();
-                    } else {
+                public void response(String result) {
+                    if (result.equals("LOGIN_OK")) {
                         // dang nhap thanh cong -> chạy ngam + so sanh
                         Toast.makeText(getBaseContext(), "Login successful!", Toast.LENGTH_SHORT).show();
-                        parentUserNameLogin = userNameParent;
-                        startMotherSrevice(getCurrentFocus());
+                        parent_user = userNameParent;
                         Intent intentMotherLogin = new Intent(getBaseContext(), ShowChildrenActivity.class);
                         intentMotherLogin.putExtra("ParrentUser", userNameParent);
                         startActivity(intentMotherLogin);
-                        // login thanh cong thi chuyen mode login thanh true
-//                        MainActivity.isLoginMother = true;
-                        // set lai cac editText la null
-                        edtUserNameParent.setText("");
-                        edtPassParent.setText("");
+                    } else {
+                        Toast.makeText(getBaseContext(), "Username or Password incorrect!", Toast.LENGTH_SHORT).show();
                     }
                 }
-            });
-        }
+            };
 
+//            parentUserNameLogin = userNameParent;
+//            startMotherSrevice(getCurrentFocus());
+
+            // login thanh cong thi chuyen mode login thanh true
+//                        MainActivity.isLoginMother = true;
+            // set lai cac editText la null
+            edtUserNameParent.setText("");
+            edtPassParent.setText("");
+        }
     }
+
+
 
     public void startMotherSrevice(View v) {
         Intent intentServiceMother = new Intent(getBaseContext(), MotherService.class);

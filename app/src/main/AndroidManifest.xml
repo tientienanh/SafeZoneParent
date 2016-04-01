@@ -21,9 +21,15 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity android:name=".LoginMotherActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".RegisterActivity" >
 
         </activity>
-        <activity android:name=".RegisterActivity" />
         <activity android:name=".ShowChildrenActivity" />
 
         <service android:name=".MotherService" />
@@ -33,11 +39,7 @@
             android:name=".AddChildrentActivity"
             android:label="@string/title_activity_add_childrent"
             android:theme="@style/AppTheme.NoActionBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

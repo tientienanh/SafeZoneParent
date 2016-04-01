@@ -5,63 +5,50 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import com.parse.ParseObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShowChildrenActivity extends AppCompatActivity {
+public class ShowChildrenActivity extends AppCompatActivity implements View.OnClickListener {
     ListView lvShowChildren;
     String currentParentUser;
     public static String childrenNameClick;
-    final List<String> childrentUserList = new ArrayList<>();
+    List<Child> childrenList = new ArrayList<>();
+    List<String> childrentUserList = new ArrayList<>();
     ArrayAdapter<String> adapter;
     public static final String CHILD_NAME = "child_name";
     public static final String PARENT_NAME = "parent_name";
     public static final String PARENT_PASS = "parent_pass";
     public static final String CHILD_LATITUDE = "child_latitude";
     public static final String CHILD_LONGITUDE = "child_longitude";
+//    Button btnAdd;
+    ChildHelper childHelper = new ChildHelper(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_show_children);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        btnAdd = (Button) findViewById(R.id.btnAddChildren);
+//        btnAdd.setOnClickListener(this);
+
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         Bundle b = getIntent().getExtras();
         currentParentUser = b.getString("ParrentUser"); // gui tu LoginMotherActivity qua
         lvShowChildren = (ListView) findViewById(R.id.lvShowChildren);
-        // lay het cac con cua tai khoan nay dua vao List
 
-        QueryAccount queryAccount = new QueryAccount();
-        queryAccount.queryAccount("Children", new QueryAccount.QueryRouteCallBack() {
-            @Override
-            public void queryRouteSuccess(List<ParseObject> parseObjects) {
-                for (int i = 0;i <parseObjects.size();i++) {
-                    String parentUserParse = parseObjects.get(i).getString(PARENT_NAME);
-                    if (parentUserParse.equals(currentParentUser)) {
-                        String chidrenUserParse = parseObjects.get(i).getString(CHILD_NAME);
-                        childrentUserList.add(chidrenUserParse);
-                    }
-                }
-                // dua childrenUserList vao adapter
-//                adapter = new ArrayAdapter<String>(ShowChildrenActivity.this,android.R.layout.simple_list_item_1, childrentUserList);
-                adapter = new ChildrenAdapter(ShowChildrenActivity.this, R.layout.row_layout_showchildren,childrentUserList);
-                lvShowChildren.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-            }
-        });
+        getListName();
 
-        lvShowChildren.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        adapter = new ChildrenAdapter(this, R.layout.row_layout_showchildren, childrentUserList);
+        lvShowChildren.setAdapter(adapter);
+
+        /*lvShowChildren.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 childrenNameClick = childrentUserList.get(position);
@@ -69,7 +56,14 @@ public class ShowChildrenActivity extends AppCompatActivity {
                 intentMother.putExtra("UserChildren", childrentUserList.get(position));
                 startActivity(intentMother);
             }
-        });
+        });*/
+    }
+
+    private void getListName() {
+        childrenList = childHelper.getAll();
+        for (int i = 0; i < childrenList.size();i++) {
+            childrentUserList.add(0, childrenList.get(i).getChild_nickname());
+        }
     }
 
     @Override
@@ -81,9 +75,16 @@ public class ShowChildrenActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_logout) {
-           dialogLogout();
+        switch (id) {
+            case R.id.action_logout:
+                dialogLogout();
+                break;
+            case R.id.action_add:
+                Intent intentAdd = new Intent(ShowChildrenActivity.this, AddChildrentActivity.class);
+                startActivity(intentAdd);
+                break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -95,7 +96,6 @@ public class ShowChildrenActivity extends AppCompatActivity {
         // quay ve man hinh login
         Intent intentBack = new Intent(ShowChildrenActivity.this, LoginMotherActivity.class);
         startActivity(intentBack);
-
         finish();
     }
 
@@ -125,4 +125,34 @@ public class ShowChildrenActivity extends AppCompatActivity {
             AlertDialog alertDialog = dialog.create();
             alertDialog.show();
         }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        /*if (id == R.id.btnAddChildren) {
+            Intent intentAdd = new Intent(ShowChildrenActivity.this, AddChildrentActivity.class);
+            startActivity(intentAdd);*/
+//        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
+                String nick_add = data.getExtras().getString("NICK_NAME");
+                byte[] image_add = data.getExtras().getByteArray("IMAGE");
+                childrentUserList.add(0, nick_add);
+                adapter.notifyDataSetChanged();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        getListName();
+//        adapter = new ChildrenAdapter(ShowChildrenActivity.this, R.layout.row_layout_showchildren, childrentUserList);
+        adapter.notifyDataSetChanged();
+    }
 }

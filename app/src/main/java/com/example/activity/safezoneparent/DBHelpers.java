@@ -26,6 +26,16 @@ public class DBHelpers extends SQLiteOpenHelper {
                 Route.D_LATITUTE + " text," +
                 Route.D_LONGITUTE + " text " + ")";
         sqLiteDatabase.execSQL(CREATE_TABLE_ROUTE);
+
+        String CREATE_TABLE_CHILDREN = "CREATE TABLE " + Child.TABLE_CHILD + "( " +
+                Child.ID + " integer primary key,"+
+                Child.CHILD_FULLNAME + " text," +
+                Child.CHILD_NICKNAME + " text," +
+                Child.CHILD_AGE + " integer," +
+                Child.CHILD_GRADE + " integer, " +
+                Child.GENDER + " integer, " +
+                Child.IMAGE + " blob " +  ")";
+        sqLiteDatabase.execSQL(CREATE_TABLE_CHILDREN);
     }
 
 
