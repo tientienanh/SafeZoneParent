@@ -28,18 +28,20 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity" >
-
         </activity>
         <activity android:name=".ShowChildrenActivity" />
 
         <service android:name=".MotherService" />
 
-
         <activity
             android:name=".AddChildrentActivity"
             android:label="@string/title_activity_add_childrent"
             android:theme="@style/AppTheme.NoActionBar" >
-
+        </activity>
+        <activity
+            android:name=".DetailChildren"
+            android:label="@string/title_activity_detail_children"
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>
 

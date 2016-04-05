@@ -12,11 +12,22 @@ public class Child {
     public static final String ID = "id";
     public static final String IMAGE = "image";
     public static final String GENDER = "gender";
+    public static final String PARENT_USER = "parent_user";
 
     private String child_fullname;
     private String child_nickname;
     private int age;
     private int grade;
+
+    public String getParent_user() {
+        return parent_user;
+    }
+
+    public void setParent_user(String parent_user) {
+        this.parent_user = parent_user;
+    }
+
+    private String parent_user;
 
     public int getGender() {
         return gender;
@@ -30,6 +41,16 @@ public class Child {
 
     // edit
     public Child(String child_fullname, String child_nickname, int age, int grade, int gender, byte[] image) {
+        this.child_fullname = child_fullname;
+        this.child_nickname = child_nickname;
+        this.age = age;
+        this.grade = grade;
+        this.gender = gender;
+        this.image = image;
+    }
+
+    public Child(int id, String child_fullname, String child_nickname, int age, int grade, int gender, byte[] image) {
+        this.id = id;
         this.child_fullname = child_fullname;
         this.child_nickname = child_nickname;
         this.age = age;

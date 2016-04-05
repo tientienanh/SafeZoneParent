@@ -76,7 +76,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 // insert
                 hashMap = new HashMap<>();
                 hashMap.put("GET", "2");
-                hashMap.put("INSERT", "1");
+                hashMap.put("PUT", "1");
                 hashMap.put(FULL_NAME, fullname_parent);
                 hashMap.put(USERNAME, usernameParentRegister);
                 hashMap.put(PASS, passwordParentRegister);
@@ -88,9 +88,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 socketAsynctask.socketResponse = new SocketAsynctask.SocketResponse() {
                     @Override
                     public void response(String result) {
-                        Log.d("R", ""+result);
-                        Toast.makeText(getBaseContext(), ""+result, Toast.LENGTH_SHORT).show();
-                    }
+                        Log.d("R", "" + result);
+                            Toast.makeText(getBaseContext(), "" + result, Toast.LENGTH_SHORT).show();
+                        }
                 };
 
                 Log.d("", "execute");

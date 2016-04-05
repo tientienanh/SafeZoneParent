@@ -84,4 +84,19 @@ public class ChildHelper {
         }
         return childList; // return list note
     }
+
+    public int updateChild(Child c) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Child.ID, c.getId());
+        contentValues.put(Child.PARENT_USER, c.getParent_user());
+        contentValues.put(Child.CHILD_FULLNAME, c.getChild_fullname());
+        contentValues.put(Child.CHILD_NICKNAME, c.getChild_nickname());
+        contentValues.put(Child.CHILD_AGE, c.getAge());
+        contentValues.put(Child.CHILD_GRADE, c.getGrade());
+        contentValues.put(Child.GENDER, c.getGender());
+        contentValues.put(Child.IMAGE, c.getImage());
+        int i = db.update(Child.TABLE_CHILD, contentValues, Child.ID + "=" + c.getId(), null);
+        return i;
+    }
 }

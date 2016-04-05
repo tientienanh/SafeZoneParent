@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 
 public class LoginMotherActivity extends AppCompatActivity implements View.OnClickListener{
@@ -19,10 +22,10 @@ public class LoginMotherActivity extends AppCompatActivity implements View.OnCli
     EditText edtUserNameParent, edtPassParent;
     Button btnLoginParent, btnRegisterParent, btnLostPassParent;
     public static String parentUserNameLogin;
-    public static final String MODE_LOGIN = "login";
+    public static final String MODE_LOGIN = "3";
     public static final String USER_PARENT = "user_parent";
     public static final String PASS_PARENT = "pass_parent";
-    public static final String KEY_LOGIN = "login";
+    public static final String KEY_LOGIN = "PUT";
 
     public static String parent_user;
     @Override
@@ -108,26 +111,29 @@ public class LoginMotherActivity extends AppCompatActivity implements View.OnCli
             socketAsynctask.execute(hashMapLogin);
             socketAsynctask.socketResponse = new SocketAsynctask.SocketResponse() {
                 @Override
-                public void response(String result) {
-                    if (result.equals("LOGIN_OK")) {
-                        // dang nhap thanh cong -> chạy ngam + so sanh
-                        Toast.makeText(getBaseContext(), "Login successful!", Toast.LENGTH_SHORT).show();
-                        parent_user = userNameParent;
-                        Intent intentMotherLogin = new Intent(getBaseContext(), ShowChildrenActivity.class);
-                        intentMotherLogin.putExtra("ParrentUser", userNameParent);
-                        startActivity(intentMotherLogin);
-                    } else {
-                        Toast.makeText(getBaseContext(), "Username or Password incorrect!", Toast.LENGTH_SHORT).show();
+                public void response(String strJson) {
+                    String result = "";
+                    try {
+                        JSONObject jsonObject = new JSONObject(strJson);
+                        result = jsonObject.getString("RESULT");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }
+                        if (result.equals("LOGIN_OK")) {
+
+                            // dang nhap thanh cong -> chạy ngam + so sanh
+                            Toast.makeText(getBaseContext(), "Login successful!", Toast.LENGTH_SHORT).show();
+                            parent_user = userNameParent;
+                            Intent intentMotherLogin = new Intent(getBaseContext(), ShowChildrenActivity.class);
+                            intentMotherLogin.putExtra("ParrentUser", userNameParent);
+                            startActivity(intentMotherLogin);
+                        } else {
+                            Toast.makeText(getBaseContext(), "Username or Password incorrect!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
             };
-
-//            parentUserNameLogin = userNameParent;
-//            startMotherSrevice(getCurrentFocus());
-
-            // login thanh cong thi chuyen mode login thanh true
-//                        MainActivity.isLoginMother = true;
-            // set lai cac editText la null
+            // reset editText
             edtUserNameParent.setText("");
             edtPassParent.setText("");
         }

@@ -1,17 +1,25 @@
 package com.example.activity.safezoneparent;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ShowChildrenActivity extends AppCompatActivity implements View.OnClickListener {
@@ -26,8 +34,9 @@ public class ShowChildrenActivity extends AppCompatActivity implements View.OnCl
     public static final String PARENT_PASS = "parent_pass";
     public static final String CHILD_LATITUDE = "child_latitude";
     public static final String CHILD_LONGITUDE = "child_longitude";
-//    Button btnAdd;
+    //    Button btnAdd;
     ChildHelper childHelper = new ChildHelper(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,25 +54,89 @@ public class ShowChildrenActivity extends AppCompatActivity implements View.OnCl
 
         getListName();
 
+//        Log.d("A", "FN Create adapter");
         adapter = new ChildrenAdapter(this, R.layout.row_layout_showchildren, childrentUserList);
         lvShowChildren.setAdapter(adapter);
+        Log.d("A", "FN Create adapter");
 
-        /*lvShowChildren.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvShowChildren.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                childrenNameClick = childrentUserList.get(position);
-                Intent intentMother = new Intent(ShowChildrenActivity.this, MotherActvity.class);
-                intentMother.putExtra("UserChildren", childrentUserList.get(position));
-                startActivity(intentMother);
+                Child childrenClick = childrenList.get(position);
+                Intent intentDetail = new Intent(ShowChildrenActivity.this, DetailChildren.class);
+                intentDetail.putExtra(Child.PARENT_USER, LoginMotherActivity.parent_user);
+                intentDetail.putExtra(Child.CHILD_FULLNAME, childrenClick.getChild_fullname());
+                intentDetail.putExtra(Child.CHILD_NICKNAME, childrenClick.getChild_nickname());
+                intentDetail.putExtra(Child.GENDER, childrenClick.getGender());
+                intentDetail.putExtra(Child.CHILD_AGE, childrenClick.getAge());
+                intentDetail.putExtra(Child.CHILD_GRADE, childrenClick.getGrade());
+                byte[] b = childrenClick.getImage();
+                intentDetail.putExtra(Child.IMAGE, childrenClick.getImage());
+                intentDetail.putExtra(Child.ID, childrenClick.getId());
+                startActivity(intentDetail);
             }
-        });*/
+        });
     }
 
+    public void getListChild(Context context) {
+
+        HashMap<String, String> hashMapListChild = new HashMap<>();
+        hashMapListChild.put("PUT", "5");
+        hashMapListChild.put("parent_user", LoginMotherActivity.parent_user);
+        SocketAsynctask socketAsynctask = new SocketAsynctask(context);
+        socketAsynctask.execute(hashMapListChild);
+        socketAsynctask.socketResponse = new SocketAsynctask.SocketResponse() {
+            @Override
+            public void response(String result) {
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    JSONArray jsonArray = jsonObject.getJSONArray("Children");
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonChild = jsonArray.getJSONObject(i);
+                        String pr_user = jsonChild.getString(Child.PARENT_USER);
+                        String fullname = jsonChild.getString("full_name");
+                        String nickname = jsonChild.getString("nick_name");
+                        int age = jsonChild.getInt("age");
+                        int gender = jsonChild.getInt("gender");
+                        int grade = jsonChild.getInt("grade");
+                        int id = jsonChild.getInt("id");
+                        ///////////NOTE************ add image
+//                        String image = jsonChild.getString(Child.IMAGE);
+                        Child c = new Child(id, fullname, nickname, age, grade, gender, null);
+                        childrenList.add(c);
+                        Log.d("A", "finish add");
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+
+
     private void getListName() {
-        childrenList = childHelper.getAll();
-        for (int i = 0; i < childrenList.size();i++) {
-            childrentUserList.add(0, childrenList.get(i).getChild_nickname());
-        }
+        GetListChild getListChild = GetListChild.getInstance();
+        childrenList.clear();
+        childrenList = getListChild.getListChild(this);
+        getListChild.mGetListCallback = new GetListChild.GetlistCallback() {
+            @Override
+            public void getListCallback(List<Child> childList) {
+
+                childrenList = childList;
+                childrentUserList.clear();
+                for (int i = 0; i < childrenList.size();i++) {
+                    childrentUserList.add(0, childrenList.get(i).getChild_nickname());
+                }
+
+                adapter.notifyDataSetChanged();
+
+                Log.d("A", "callback");
+            }
+        };
+
     }
 
     @Override
@@ -142,7 +215,9 @@ public class ShowChildrenActivity extends AppCompatActivity implements View.OnCl
                 String nick_add = data.getExtras().getString("NICK_NAME");
                 byte[] image_add = data.getExtras().getByteArray("IMAGE");
                 childrentUserList.add(0, nick_add);
-                adapter.notifyDataSetChanged();
+                Log.d("A", "onActivityResult");
+                childrenList.clear();
+//                adapter.notifyDataSetChanged();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -151,8 +226,9 @@ public class ShowChildrenActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("A","onResume");
 //        getListName();
 //        adapter = new ChildrenAdapter(ShowChildrenActivity.this, R.layout.row_layout_showchildren, childrentUserList);
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
     }
 }

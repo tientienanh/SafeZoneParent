@@ -131,6 +131,7 @@ public class AddChildrentActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
+
     public int getGender() {
         int gender = 0;
         if (genderSelected.equals("Male")) {
@@ -163,7 +164,7 @@ public class AddChildrentActivity extends AppCompatActivity implements View.OnCl
                 rs = childHelper.insert(child);
 
                 // insert on DB online
-                hashMapInsertChild.put("INSERT", "2");
+                hashMapInsertChild.put("PUT", "2");
                 hashMapInsertChild.put(PARENT_USER, LoginMotherActivity.parent_user);
                 hashMapInsertChild.put(CHILD_FULLNAME, fullname);
                 hashMapInsertChild.put(CHILD_NICK, nickname);
