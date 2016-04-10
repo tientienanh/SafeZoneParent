@@ -9,20 +9,36 @@ import java.util.Date;
  */
 public class Route {
 
-    public static final String TIME_FROM = "timeFrom";
-    public static final String TIME_TO = "timeTo";
-    public static final String LOCATION = "location";  //name
+    public static final String TIME_FROM = "time_from";
+    public static final String TIME_TO = "time_to";
+    public static final String ADDRESS = "address";  //name
     public static final String RADIUS = "radius";
     public static final String TABLE_ROUTE = "Route";
     public static final String ID = "id";
-    public static final String D_LATITUTE = "dLatitute";
-    public static final String D_LONGITUTE = "dLongitute";
-    public static final String CHILDREN_NAME = "children_name";
+    public static final String LATITUTE = "latitude";
+    public static final String LONGITUTE = "longitude";
+    public static final String CHILDREN_USER = "children_user";
 
     String timeFrom;
     String timeTo;
-    String location; //name
+    String address; //name
     String radius;
+    String dLatitute;
+    String dLongtitute;
+
+    public Route(String timeFrom, String timeTo, String address, String radius, String dLatitute, String dLongtitute, String childrenName, int id) {
+        this.timeFrom = timeFrom;
+        this.timeTo = timeTo;
+        this.address = address;
+        this.radius = radius;
+        this.dLatitute = dLatitute;
+        this.dLongtitute = dLongtitute;
+        this.childrenName = childrenName;
+        this.id = id;
+    }
+
+    public Route() {
+    }
 
     public String getChildrenName() {
         return childrenName;
@@ -50,8 +66,7 @@ public class Route {
         this.dLongtitute = dLongtitute;
     }
 
-    String dLatitute;
-    String dLongtitute;
+
 
     public int getId() {
         return id;
@@ -82,12 +97,12 @@ public class Route {
         this.timeTo = timeTo;
     }
 
-    public String getLocation() {
-        return location;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getRadius() {

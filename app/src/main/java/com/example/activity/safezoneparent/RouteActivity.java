@@ -12,7 +12,11 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class RouteActivity extends AppCompatActivity implements View.OnClickListener {
@@ -38,12 +42,14 @@ public class RouteActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
-        Bundle b =  getIntent().getExtras();
-        childrenName = b.getString("childrenName");
+//        Bundle b =  getIntent().getExtras();
+//        childrenName = b.getString("childrenName");
+        childrenName = ShowSelectionActivity.childNickname;
 
         lvRoute = (ListView) findViewById(R.id.listRoute);
         routes = new ArrayList<>();
-        routes = routeHelper.get(childrenName);
+//        routes = routeHelper.get(childrenName);
+        getListRoute();
         addNullRoute();
 
         adapter = new RouteAdapter(RouteActivity.this,R.layout.row_route_layout,routes,this);
@@ -55,18 +61,52 @@ public class RouteActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View view) {
                 // insert or update
+                Route r = getData();
+                // dend to server
                 if (mode_update_insert == MODE_INSERT) {
-                    positionItem = lvRoute.getCount() - lvRoute.getFirstVisiblePosition() - 1;
+                    /*positionItem = lvRoute.getCount() - lvRoute.getFirstVisiblePosition() - 1;
                     Route r = getData(); // Get data client input
                     if (r != null) {
                         routes.add(routes.size() - 1, r);
                         // luu vao database
                         routeHelper.insert(r);
-                    }
+                    }*/
+
+                    // add on server
+                    HashMap<String, String> hashMapPutRoute = new HashMap<String, String>();
+                    hashMapPutRoute.put("PUT", "8");
+                    hashMapPutRoute.put("parent_user", LoginMotherActivity.parent_user);
+                    hashMapPutRoute.put("children_user", ShowSelectionActivity.childNickname);
+                    hashMapPutRoute.put(Route.LATITUTE, dLat);
+                    hashMapPutRoute.put(Route.LONGITUTE, dLong);
+                    hashMapPutRoute.put(Route.TIME_FROM, timeFrom);
+                    hashMapPutRoute.put(Route.TIME_TO, timeTo);
+                    hashMapPutRoute.put(Route.ADDRESS, location);
+                    hashMapPutRoute.put(Route.RADIUS, radius);
+
+                    SocketAsynctask socketAsynctask = new SocketAsynctask(RouteActivity.this);
+                    socketAsynctask.execute(hashMapPutRoute);
+                    socketAsynctask.socketResponse = new SocketAsynctask.SocketResponse() {
+                        @Override
+                        public void response(String resultJson) {
+                            try {
+                                JSONObject json = new JSONObject(resultJson);
+                                String message = json.getString("RESULT");
+                                if (message.equals("OK")) {
+                                    Toast.makeText(RouteActivity.this, "insert route complete!", Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+
+
+
 
                 } else {
                     positionItem = RouteAdapter.positionClickedEdit - lvRoute.getFirstVisiblePosition();
-                    Route r = getData(); // Get data client input to update
+//                    Route r = getData(); // Get data client input to update
                     routes.remove(positionItem);
                     routes.add(positionItem, r);
                     // update trong db
@@ -107,7 +147,7 @@ public class RouteActivity extends AppCompatActivity implements View.OnClickList
             r = new Route();
             r.setTimeFrom(timeFrom);
             r.setTimeTo(timeTo);
-            r.setLocation(location);
+            r.setAddress(location);
             r.setRadius(radius);
             r.setChildrenName(childrenName);
             if(mode_update_insert == MODE_INSERT) {
@@ -130,6 +170,22 @@ public class RouteActivity extends AppCompatActivity implements View.OnClickList
         return r;
     }
 
+
+    private void getListRoute() {
+        GetListRoute getListRoute = GetListRoute.getInstance();
+        routes.clear();
+        routes = getListRoute.GetListRoute(this);
+        getListRoute.mGetListCallback = new GetListRoute.GetlistCallback() {
+            @Override
+            public void getListCallback(List<Route> routeList) {
+                routes = routeList;
+                adapter.notifyDataSetChanged();
+            }
+        };
+
+
+    }
+
 //    private int itemClick = 0;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -146,7 +202,7 @@ public class RouteActivity extends AppCompatActivity implements View.OnClickList
                 } else {
                     positionItem = lvRoute.getCount() - lvRoute.getFirstVisiblePosition() - 1;
                 }
-                routes.get(positionItem).setLocation(address);
+                routes.get(positionItem).setAddress(address);
                 adapter.notifyDataSetChanged();
             }
         }
@@ -170,7 +226,7 @@ public class RouteActivity extends AppCompatActivity implements View.OnClickList
         Route routeNull = new Route();
         routeNull.setTimeFrom("");
         routeNull.setTimeTo("");
-        routeNull.setLocation("");
+        routeNull.setAddress("");
         routeNull.setRadius("");
 
         routes.add(routeNull);

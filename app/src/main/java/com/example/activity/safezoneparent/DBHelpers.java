@@ -18,13 +18,13 @@ public class DBHelpers extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String CREATE_TABLE_ROUTE = "CREATE TABLE " + Route.TABLE_ROUTE + "( " +
                 Route.ID + " integer primary key,"+
-                Route.CHILDREN_NAME + " text," +
+                Route.CHILDREN_USER + " text," +
                 Route.TIME_FROM + " text," +
                 Route.TIME_TO + " text," +
-                Route.LOCATION + " text," +
+                Route.ADDRESS + " text," +
                 Route.RADIUS + " text," +
-                Route.D_LATITUTE + " text," +
-                Route.D_LONGITUTE + " text " + ")";
+                Route.LATITUTE + " text," +
+                Route.LONGITUTE + " text " + ")";
         sqLiteDatabase.execSQL(CREATE_TABLE_ROUTE);
 
         String CREATE_TABLE_CHILDREN = "CREATE TABLE " + Child.TABLE_CHILD + "( " +

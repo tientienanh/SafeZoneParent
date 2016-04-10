@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="0dp"
-    android:background="@drawable/background" >
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#aeece5">
 
         <LinearLayout
             android:id="@+id/logo"
@@ -15,7 +11,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:gravity="center"
-            android:padding="10dp" >
+            android:padding="10dp"
+            android:layout_margin="20dp"
+            android:layout_marginTop="80dp">
 
             <ImageView
                 android:layout_width="250dp"
@@ -41,8 +39,10 @@
                 android:hint="Parent's username"
                 android:singleLine="true"
                 android:textColor="#000000"
+                android:padding="10dp"
                 android:drawableLeft="@drawable/ic_action_user_icon"
-                android:background="@android:drawable/editbox_background"/>
+                android:textColorHint="#e99324"
+                />
 
             <EditText
                 android:id="@+id/edtPasswordParent"
@@ -54,7 +54,8 @@
                 android:drawableLeft="@drawable/ic_pass"
                 android:singleLine="true"
                 android:textColor="#000000"
-                android:background="@android:drawable/editbox_background"/>
+                android:textColorHint="#e99324"
+                />
 
             <Button
                 android:id="@+id/btnLoginParent"
@@ -64,50 +65,41 @@
                 android:background="@drawable/background_select"
                 android:text="Login"
                 android:textSize="20dp"
-                android:textColor="#000000"
+                android:textColor="#ffffff"
                 android:textStyle="bold" />
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="10dp"
-                android:background="#000" />
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal" >
-
-                <Button
-                    android:layout_width="0dp"
-                    android:id="@+id/btnRegisterParent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".49"
-                    android:gravity="center"
-                    android:text="Register"
-                    android:background="#3fB8B8B8"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="2dp"
-                    android:layout_height="fill_parent"
-                    android:layout_margin="10dp"
-                    android:background="#000" />
-
-                <Button
-                    android:layout_width="0dp"
-                    android:id="@+id/btnLostPasswordParent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".49"
-                    android:gravity="center"
-                    android:text="Lost Password"
-                    android:background="#3fB8B8B8"
-                    android:textStyle="bold" />
-            </LinearLayout>
         </LinearLayout>
-    </RelativeLayout>
 
-</ScrollView>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:id="@+id/tvRegisterParent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Register"
+            android:background="@null"
+            android:textStyle="bold"
+            android:autoLink="all"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:id="@+id/tvLostPasswordParent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="10dp"
+            android:text="Lost Password"
+            android:background="@null"
+            android:autoLink="all"
+            android:textStyle="bold" />
+    </LinearLayout>
+    </RelativeLayout>
 

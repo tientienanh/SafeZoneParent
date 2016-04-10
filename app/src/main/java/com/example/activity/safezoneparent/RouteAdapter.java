@@ -51,7 +51,7 @@ public class RouteAdapter extends ArrayAdapter<Route> implements View.OnClickLis
 
         String timeFrom = routes.get(position).getTimeFrom();
         String timeTo = routes.get(position).getTimeTo();
-        String location = routes.get(position).getLocation();
+        String location = routes.get(position).getAddress();
         String radius = routes.get(position).getRadius();
 
 //        btnTimeFrom = (EditText) theView.findViewById(R.id.edtTime_From);

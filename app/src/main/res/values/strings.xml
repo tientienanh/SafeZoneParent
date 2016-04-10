@@ -12,4 +12,10 @@
     <string name="picture">Picture:</string>
     <string name="title_add_child">Add Child</string>
     <string name="title_activity_detail_children">DetailChildren</string>
+    <string name="title_activity_show_selection">ShowSelectionActivity</string>
+    
+    <string name="btnLocation">Location</string>
+    <string name="btnWeb">Web History</string>
+    <string name="btnCall">Call History</string>
+    <string name="btnTimetable">Timetable</string>
 </resources>
